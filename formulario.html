@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento</title>
+    <link rel="stylesheet" href="style_formulario.css">
+</head>
+<body>
+
+    <div class="form-container">
+
+        <header class="header">
+            <img src="logo.png" alt="Logo WS Piscinas" class="header-logo">
+            <div class="company-info">
+                <strong>WS Piscinas caça vazamentos</strong>
+                <p>CNPJ: 25016679000138</p>
+                <p>R Santa Catarina 583</p>
+                <p>Telefone: 19981639852</p>
+                <p>E-mail: welsantospiscina@gmail.com</p>
+            </div>
+        </header>
+
+        <div class="inline-container">
+            <div class="info-box-inline">
+                <label>Orçamento nº</label>
+                <input type="number">
+            </div>
+            <div class="info-box-inline">
+                <label>Data:</label>
+                <input type="date">
+            </div>
+        </div>
+
+        <fieldset class="field-box">
+            <legend>Cliente</legend>
+            <input type="text" placeholder="Digite aqui">
+        </fieldset>
+
+        <fieldset class="field-box">
+            <legend>Endereço</legend>
+            <input type="text" placeholder="Digite aqui">
+        </fieldset>
+
+        <div class="field-group">
+            <fieldset class="field-box">
+                <legend>Fone</legend>
+                <input type="number" placeholder="Digite aqui">
+            </fieldset>
+            <fieldset class="field-box">
+                <legend>CPF / CNPJ</legend>
+                <input type="number" placeholder="Digite aqui">
+            </fieldset>
+        </div>
+
+        <div class="service-table">
+            <div class="table-cell">
+                <label>Serviço nº:</label>
+                <input type="number" placeholder="Digite aqui">
+            </div>
+            <div class="table-cell">
+                <label>Tipo:</label>
+                <span id="tipo-piscina"></span>
+            </div>
+            <div class="table-cell">
+                <label>Valor:</label>
+                <input type="number" placeholder="Digite aqui">
+            </div>
+        </div>
+
+        <div class="total-container">
+            <div class="info-box-total">
+                <label>Valor total:</label>
+                <input type="number">
+            </div>
+        </div>
+
+        <div class="description-table">
+            <div class="desc-cell header-cell">Serviço nº:</div>
+            <div class="desc-cell header-cell">Descrição:</div>
+            <div class="desc-cell content-cell">1</div>
+            <div id="descricao-servico" class="desc-cell content-cell"></div>
+        </div>
+
+        <div class="action-buttons">
+            <div class="button-wrapper">
+                <button class="btn btn-green">Adicionar serviço</button>
+                <img id="edit-icon" src="https://i.imgur.com/3s03SjC.png" alt="Editar" class="edit-icon">
+            </div>
+            <button class="btn btn-green">Gerar PDF</button>
+        </div>
+
+    </div>
+
+    <script>
+        const dadosPiscinas = {
+            azulejo: {
+                titulo: "Piscina de Azulejo",
+                descricao: "Vamos utilizar uma câmera de vídeo inspeção, caso seja necessário, para realizar a inspeção em toda a tubulação da piscina. Se houver mais de um cano quebrado, o valor será o mesmo. Caso não seja identificado nenhum problema na tubulação, entrarei dentro da piscina para verificar a parte estrutural. Utilizarei uma câmera para fazer a vídeo inspeção da estrutura, filmarei e mostrarei ao cliente. No entanto, o serviço relacionado à estrutura possui outro tipo de valor e pode levar até uma semana para ser concluído, dependendo do tamanho da trinca."
+            },
+            vinil: {
+                titulo: "Piscina de Vinil",
+                descricao: "O serviço para piscina de vinil envolve a verificação de possíveis microfuros no bolsão de vinil, além da inspeção completa das tubulações e pontos de conexão como retorno e aspiração."
+            },
+            fibra: {
+                titulo: "Piscina de Fibra",
+                descricao: "Para piscinas de fibra, a análise foca em possíveis fissuras na estrutura da fibra, que podem causar vazamentos, e também em toda a parte hidráulica conectada a ela."
+            }
+        };
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tipo = urlParams.get('tipo'); 
+
+            if (dadosPiscinas[tipo]) {
+                const dados = dadosPiscinas[tipo];
+                document.title = `Orçamento - ${dados.titulo}`;
+                document.getElementById('tipo-piscina').innerText = dados.titulo;
+                document.getElementById('descricao-servico').innerText = dados.descricao;
+            } else {
+                document.getElementById('tipo-piscina').innerText = "Tipo não encontrado";
+                document.getElementById('descricao-servico').innerText = "Por favor, selecione um tipo de serviço válido na tela anterior.";
+            }
+        };
+
+        // --- CÓDIGO PARA HABILITAR A EDIÇÃO ---
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const editIcon = document.getElementById('edit-icon');
+            const descricaoDiv = document.getElementById('descricao-servico');
+
+            editIcon.addEventListener('click', () => {
+                const isEditable = descricaoDiv.isContentEditable;
+
+                if (isEditable) {
+                    descricaoDiv.contentEditable = false;
+                    descricaoDiv.classList.remove('editing');
+                } else {
+                    descricaoDiv.contentEditable = true;
+                    descricaoDiv.classList.add('editing');
+                    descricaoDiv.focus();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

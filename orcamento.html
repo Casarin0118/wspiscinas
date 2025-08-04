@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Orçamento</title>
+    <link rel="stylesheet" href="style_orcamento.css">
+</head>
+<body>
+    <div class="container">
+        <button class="button" onclick="selecionarTipo('azulejo')">piscina de azulejo</button>
+        <button class="button" onclick="selecionarTipo('vinil')">piscina de vinil</button>
+        <button class="button" onclick="selecionarTipo('fibra')">piscina de fibra</button>
+        
+        <div class="logo-container">
+            <img src="logo.png" alt="Logo" class="logo">
+        </div>
+    </div>
+
+    <script>
+        function selecionarTipo(tipo) {
+            window.location.href = `formulario.html?tipo=${tipo}`;
+        }
+    </script>
+</body>
+</html>
