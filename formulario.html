@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orçamento</title>
     <link rel="stylesheet" href="style_formulario.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
-    <div class="form-container">
+    <div class="form-container" id="conteudo-para-pdf">
 
         <header class="header">
             <img src="logo.png" alt="Logo WS Piscinas" class="header-logo">
@@ -23,71 +24,73 @@
 
         <div class="inline-container">
             <div class="info-box-inline">
-                <label>Orçamento nº</label>
-                <input type="number">
+                <input type="number" placeholder="Orçamento n°" class="campo-limpavel">
             </div>
             <div class="info-box-inline">
                 <label>Data:</label>
-                <input type="date">
+                <input type="date" class="campo-limpavel">
             </div>
         </div>
 
         <fieldset class="field-box">
             <legend>Cliente</legend>
-            <input type="text" placeholder="Digite aqui">
+            <input type="text" placeholder="Digite aqui" class="campo-limpavel">
         </fieldset>
 
         <fieldset class="field-box">
             <legend>Endereço</legend>
-            <input type="text" placeholder="Digite aqui">
+            <input type="text" placeholder="Digite aqui" class="campo-limpavel">
         </fieldset>
 
         <div class="field-group">
             <fieldset class="field-box">
                 <legend>Fone</legend>
-                <input type="number" placeholder="Digite aqui">
+                <input type="number" placeholder="Digite aqui" class="campo-limpavel">
             </fieldset>
             <fieldset class="field-box">
                 <legend>CPF / CNPJ</legend>
-                <input type="number" placeholder="Digite aqui">
+                <input type="number" placeholder="Digite aqui" class="campo-limpavel">
             </fieldset>
         </div>
-
-        <div class="service-table">
-            <div class="table-cell">
-                <label>Serviço nº:</label>
-                <input type="number" placeholder="Digite aqui">
-            </div>
-            <div class="table-cell">
-                <label>Tipo:</label>
-                <span id="tipo-piscina"></span>
-            </div>
-            <div class="table-cell">
-                <label>Valor:</label>
-                <input type="number" placeholder="Digite aqui">
+        
+        <div id="servicos-container">
+            <div class="service-table evitar-quebra-pagina">
+                <div class="table-cell">
+                    <label>Serviço nº:</label>
+                    <span class="servico-numero">1</span>
+                </div>
+                <div class="table-cell">
+                    <label>Tipo:</label>
+                    <span id="tipo-piscina"></span>
+                </div>
+                <div class="table-cell">
+                    <label>Valor:</label>
+                    <input type="number" placeholder="Digite aqui" class="servico-valor campo-limpavel">
+                </div>
             </div>
         </div>
 
         <div class="total-container">
             <div class="info-box-total">
                 <label>Valor total:</label>
-                <input type="number">
+                <input type="number" id="valor-total-input" readonly>
             </div>
         </div>
 
-        <div class="description-table">
+        <div class="description-table" id="tabela-descricao">
             <div class="desc-cell header-cell">Serviço nº:</div>
             <div class="desc-cell header-cell">Descrição:</div>
-            <div class="desc-cell content-cell">1</div>
-            <div id="descricao-servico" class="desc-cell content-cell"></div>
+            <div class="desc-cell content-cell evitar-quebra-pagina">1</div>
+            <div id="descricao-servico" class="desc-cell content-cell evitar-quebra-pagina"></div>
         </div>
 
-        <div class="action-buttons">
+        <div class="action-buttons" id="botoes-acao">
             <div class="button-wrapper">
-                <button class="btn btn-green">Adicionar serviço</button>
-                <img id="edit-icon" src="https://i.imgur.com/3s03SjC.png" alt="Editar" class="edit-icon">
+                <button id="adicionar-servico-btn" class="btn btn-green">Adicionar serviço</button>
+                <img id="edit-icon" src="/editar.png" alt="Editar" class="edit-icon">
             </div>
-            <button class="btn btn-green">Gerar PDF</button>
+            <button id="gerar-pdf-btn" class="btn btn-green">Gerar PDF</button>
+            <button id="limpar-campos-btn" class="btn btn-gray">Limpar Campos</button>
         </div>
 
     </div>
@@ -98,22 +101,18 @@
                 titulo: "Piscina de Azulejo",
                 descricao: "Vamos utilizar uma câmera de vídeo inspeção, caso seja necessário, para realizar a inspeção em toda a tubulação da piscina. Se houver mais de um cano quebrado, o valor será o mesmo. Caso não seja identificado nenhum problema na tubulação, entrarei dentro da piscina para verificar a parte estrutural. Utilizarei uma câmera para fazer a vídeo inspeção da estrutura, filmarei e mostrarei ao cliente. No entanto, o serviço relacionado à estrutura possui outro tipo de valor e pode levar até uma semana para ser concluído, dependendo do tamanho da trinca."
             },
-            vinil: {
-                titulo: "Piscina de Vinil",
-                descricao: "O serviço para piscina de vinil envolve a verificação de possíveis microfuros no bolsão de vinil, além da inspeção completa das tubulações e pontos de conexão como retorno e aspiração."
-            },
-            fibra: {
-                titulo: "Piscina de Fibra",
-                descricao: "Para piscinas de fibra, a análise foca em possíveis fissuras na estrutura da fibra, que podem causar vazamentos, e também em toda a parte hidráulica conectada a ela."
-            }
+            vinil: { /* ... */ },
+            fibra: { /* ... */ }
         };
+
+        let tipoPiscinaAtual = '';
 
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            const tipo = urlParams.get('tipo'); 
+            tipoPiscinaAtual = urlParams.get('tipo'); 
 
-            if (dadosPiscinas[tipo]) {
-                const dados = dadosPiscinas[tipo];
+            if (dadosPiscinas[tipoPiscinaAtual]) {
+                const dados = dadosPiscinas[tipoPiscinaAtual];
                 document.title = `Orçamento - ${dados.titulo}`;
                 document.getElementById('tipo-piscina').innerText = dados.titulo;
                 document.getElementById('descricao-servico').innerText = dados.descricao;
@@ -121,16 +120,15 @@
                 document.getElementById('tipo-piscina').innerText = "Tipo não encontrado";
                 document.getElementById('descricao-servico').innerText = "Por favor, selecione um tipo de serviço válido na tela anterior.";
             }
+            adicionarListenersDeCalculo();
         };
 
-        // --- CÓDIGO PARA HABILITAR A EDIÇÃO ---
         document.addEventListener('DOMContentLoaded', (event) => {
             const editIcon = document.getElementById('edit-icon');
             const descricaoDiv = document.getElementById('descricao-servico');
 
             editIcon.addEventListener('click', () => {
                 const isEditable = descricaoDiv.isContentEditable;
-
                 if (isEditable) {
                     descricaoDiv.contentEditable = false;
                     descricaoDiv.classList.remove('editing');
@@ -141,7 +139,134 @@
                 }
             });
         });
-    </script>
 
+        let servicoContador = 1;
+
+        const adicionarBtn = document.getElementById('adicionar-servico-btn');
+        const servicosContainer = document.getElementById('servicos-container');
+
+        function adicionarServico() {
+            servicoContador++;
+
+            const novoServicoDiv = document.createElement('div');
+            novoServicoDiv.classList.add('service-table', 'evitar-quebra-pagina'); 
+            novoServicoDiv.innerHTML = `
+                <div class="table-cell">
+                    <label>Serviço nº:</label>
+                    <span class="servico-numero">${servicoContador}</span>
+                </div>
+                <div class="table-cell">
+                    <label>Tipo:</label>
+                    <input type="text" placeholder="Descrição do serviço" class="campo-limpavel">
+                </div>
+                <div class="table-cell">
+                    <label>Valor:</label>
+                    <input type="number" placeholder="Digite aqui" class="servico-valor campo-limpavel">
+                </div>
+            `;
+            servicosContainer.appendChild(novoServicoDiv);
+
+            const tabelaDescricao = document.getElementById('tabela-descricao');
+
+            const numeroCell = document.createElement('div');
+            numeroCell.classList.add('desc-cell', 'content-cell', 'evitar-quebra-pagina');
+            numeroCell.innerText = servicoContador;
+
+            const descricaoCell = document.createElement('div');
+            descricaoCell.classList.add('desc-cell', 'content-cell', 'evitar-quebra-pagina');
+            descricaoCell.contentEditable = true; 
+
+            tabelaDescricao.appendChild(numeroCell);
+            tabelaDescricao.appendChild(descricaoCell);
+
+            adicionarListenersDeCalculo();
+        }
+
+        function atualizarValorTotal() {
+            let total = 0;
+            const todosOsValores = document.querySelectorAll('.servico-valor');
+            todosOsValores.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            const totalInput = document.getElementById('valor-total-input');
+            totalInput.value = total.toFixed(2);
+        }
+
+        function adicionarListenersDeCalculo() {
+            const todosOsValores = document.querySelectorAll('.servico-valor');
+            todosOsValores.forEach(input => {
+                input.addEventListener('input', atualizarValorTotal);
+            });
+        }
+
+        adicionarBtn.addEventListener('click', adicionarServico);
+
+        // --- ATUALIZAÇÃO: Função de Gerar PDF reescrita ---
+        const gerarPdfBtn = document.getElementById('gerar-pdf-btn');
+
+        function gerarPDF() {
+            // 1. Seleciona os elementos
+            const element = document.getElementById('conteudo-para-pdf');
+            const botoes = document.getElementById('botoes-acao');
+
+            // 2. Salva os estilos originais do formulário
+            const originalStyle = {
+                width: element.style.width,
+                maxWidth: element.style.maxWidth
+            };
+
+            // 3. Esconde os botões e alarga o formulário para o tamanho do PDF
+            botoes.style.display = 'none';
+            element.style.width = '690px'; // Largura aproximada de uma página A4
+            element.style.maxWidth = 'none';
+
+            // 4. Configura as opções do PDF, voltando para o formato A4
+            const options = {
+                margin:       0.4, // Margem em polegadas
+                filename:     'orcamento.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'] }
+            };
+
+            // 5. Gera o PDF
+            html2pdf().set(options).from(element).save().then(() => {
+                // 6. Restaura os estilos originais do formulário e mostra os botões novamente
+                element.style.width = originalStyle.width;
+                element.style.maxWidth = originalStyle.maxWidth;
+                botoes.style.display = 'flex';
+            });
+        }
+        gerarPdfBtn.addEventListener('click', gerarPDF);
+
+        const limparBtn = document.getElementById('limpar-campos-btn');
+
+        function limparCampos() {
+            const campos = document.querySelectorAll('.campo-limpavel');
+            campos.forEach(input => {
+                input.value = '';
+            });
+
+            while (servicosContainer.children.length > 1) {
+                servicosContainer.removeChild(servicosContainer.lastChild);
+            }
+
+            const tabelaDescricao = document.getElementById('tabela-descricao');
+            while (tabelaDescricao.children.length > 4) {
+                tabelaDescricao.removeChild(tabelaDescricao.lastChild);
+            }
+            if (dadosPiscinas[tipoPiscinaAtual]) {
+                 document.getElementById('descricao-servico').innerHTML = dadosPiscinas[tipoPiscinaAtual].descricao;
+            } else {
+                 document.getElementById('descricao-servico').innerHTML = '';
+            }
+
+            servicoContador = 1;
+            atualizarValorTotal();
+        }
+        limparBtn.addEventListener('click', limparCampos);
+
+    </script>
 </body>
 </html>

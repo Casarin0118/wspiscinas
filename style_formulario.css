@@ -160,6 +160,7 @@ input[type=number] {
 }
 .desc-cell {
     padding: 8px;
+    overflow-wrap: break-word; 
 }
 .header-cell {
     font-weight: bold;
@@ -168,9 +169,10 @@ input[type=number] {
 .content-cell {
     border-top: 2px solid black;
 }
-.desc-cell:nth-child(2), .desc-cell:nth-child(4) {
+.desc-cell:nth-child(even) {
     border-left: 2px solid black;
 }
+
 #descricao-servico {
     font-size: 0.9em;
     line-height: 1.4;
@@ -180,7 +182,7 @@ input[type=number] {
 .action-buttons {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
     margin-top: 10px;
 }
 .button-wrapper {
@@ -189,9 +191,9 @@ input[type=number] {
 .btn {
     color: white;
     border: none;
-    padding: 18px;
+    padding: 15px;
     border-radius: 30px;
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-weight: bold;
     cursor: pointer;
     width: 100%;
@@ -203,6 +205,14 @@ input[type=number] {
 .btn-green:hover {
     background-color: #228B22;
 }
+.btn-gray {
+    background-color: #808080;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.btn-gray:hover {
+    background-color: #696969;
+}
+
 .edit-icon {
     position: absolute;
     top: -5px;
@@ -217,9 +227,16 @@ input[type=number] {
 
 /* Estilo para o modo de edição */
 #descricao-servico.editing {
-    background-color: #f0f8ff; /* AliceBlue */
-    outline: 2px solid #1E90FF; /* DodgerBlue */
+    background-color: #f0f8ff;
+    outline: 2px solid #1E90FF;
     border-radius: 5px;
     cursor: text;
-    padding: 6px; /* Ajusta o padding interno no modo de edição */
+    padding: 6px;
+}
+
+/* Classe para melhorar a quebra de página no PDF */
+@media print {
+    .evitar-quebra-pagina {
+        page-break-inside: avoid;
+    }
 }
