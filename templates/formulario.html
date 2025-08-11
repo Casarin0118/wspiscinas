@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_formulario.css') }}">
+</head>
+<body>
+
+    <div class="form-container" id="conteudo-para-pdf">
+        <header class="header">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo WS Piscinas" class="header-logo">
+            <div class="company-info">
+                <strong>WS Piscinas caça vazamentos</strong>
+                <p>CNPJ: 25016679000138</p>
+                <p>R Santa Catarina 583</p>
+                <p>Telefone: 19981639852</p>
+                <p>E-mail: welsantospiscina@gmail.com</p>
+            </div>
+        </header>
+        <div class="inline-container">
+            <div class="info-box-inline">
+                <input type="number" placeholder="Orçamento n°" class="campo-limpavel">
+            </div>
+            <div class="info-box-inline">
+                <label>Data:</label>
+                <input type="date" class="campo-limpavel">
+            </div>
+        </div>
+        <fieldset class="field-box">
+            <legend>Cliente</legend>
+            <input type="text" placeholder="Digite aqui" class="campo-limpavel">
+        </fieldset>
+        <fieldset class="field-box">
+            <legend>Endereço</legend>
+            <input type="text" placeholder="Digite aqui" class="campo-limpavel">
+        </fieldset>
+        <div class="field-group">
+            <fieldset class="field-box">
+                <legend>Fone</legend>
+                <input type="number" placeholder="Digite aqui" class="campo-limpavel">
+            </fieldset>
+            <fieldset class="field-box">
+                <legend>CPF / CNPJ</legend>
+                <input type="number" placeholder="Digite aqui" class="campo-limpavel">
+            </fieldset>
+        </div>
+        <div id="servicos-container">
+            <div class="service-table">
+                <div class="table-cell">
+                    <label>Serviço nº:</label>
+                    <span class="servico-numero">1</span>
+                </div>
+                <div class="table-cell">
+                    <label>Tipo:</label>
+                    <span id="tipo-piscina"></span>
+                </div>
+                <div class="table-cell">
+                    <label>Valor:</label>
+                    <input type="number" placeholder="Digite aqui" class="servico-valor campo-limpavel">
+                </div>
+            </div>
+        </div>
+        <div class="total-container">
+            <div class="info-box-total">
+                <label>Valor total:</label>
+                <input type="number" id="valor-total-input" readonly>
+            </div>
+        </div>
+        <div class="description-table" id="tabela-descricao">
+            <div class="desc-cell header-cell">Serviço nº:</div>
+            <div class="desc-cell header-cell">Descrição:</div>
+            <div class="desc-cell content-cell">1</div>
+            <div id="descricao-servico" class="desc-cell content-cell"></div>
+        </div>
+        <div class="action-buttons" id="botoes-acao">
+            <div class="button-wrapper">
+                <button id="adicionar-servico-btn" class="btn btn-green">Adicionar serviço</button>
+                <img id="edit-icon" src="{{ url_for('static', filename='editar.png') }}" alt="Editar" class="edit-icon">
+            </div>
+            <button id="gerar-pdf-btn" class="btn btn-green">Gerar PDF</button>
+            <button id="limpar-campos-btn" class="btn btn-gray">Limpar Campos</button>
+        </div>
+    </div>
+    <script>
+        const dadosPiscinas = {
+            azulejo: {
+                titulo: "Piscina de Azulejo",
+                descricao: "Para a piscina de azulejo, iniciaremos com uma inspeção por vídeo em toda a tubulação para identificar possíveis vazamentos. Caso seja encontrado mais de um cano quebrado, o valor do serviço de reparo da tubulação será o mesmo. Se nenhum problema for detectado na tubulação, farei uma inspeção subaquática na parte estrutural da piscina. Este procedimento também será filmado para ser apresentado ao cliente. É importante ressaltar que o reparo da estrutura corresponde a um orçamento diferente. Dependendo do tamanho da trinca, o conserto pode levar até uma semana para ser concluído."
+            },
+            vinil: {
+                titulo: "Piscina de vinil",
+                descricao: " Nós vamos começar com um teste de pressão em todos os canos. Se acharmos um vazamento na tubulação, a gente quebra o piso no ponto certo e conserta. Agora, se não houver nada de errado com os canos, eu entro na piscina para procurar por rasgos no vinil. Se tiver algum, o conserto é feito ali mesmo, com a piscina cheia. Quero deixar um alerta: existe uma situação bem rara em que a pessoa que construiu a piscina, para economizar cano, colocou o dispositivo direto na estrutura. Se for esse o caso, não tem como a gente mexer. Seria preciso chamar outra pessoa para tirar o vinil e refazer essa parte. Isso é um erro de quem construiu, mas é algo que, infelizmente, podemos encontrar."
+             },
+             fibra: {
+                titulo: "Piscina de fibra",
+                descricao: "Para piscinas de fibra, iniciamos com um teste de pressão em toda a tubulação. Se um cano quebrado for identificado, nós realizamos o conserto. Geralmente, os vazamentos em piscinas de fibra têm duas causas comuns: problemas na tubulação ou nos dispositivos (ralos, retornos, etc.). Após localizar o ponto exato da falha, removemos o piso necessário, filmamos o cano quebrado para mostrar ao cliente e, em seguida, efetuamos o reparo. Solicitamos ao cliente apenas a compra do material, que geralmente consiste em itens simples e de baixo custo."
+             }
+        };
+        let tipoPiscinaAtual = '';
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            tipoPiscinaAtual = urlParams.get('tipo');
+            if (dadosPiscinas[tipoPiscinaAtual]) {
+                const dados = dadosPiscinas[tipoPiscinaAtual];
+                document.title = `Orçamento - ${dados.titulo}`;
+                document.getElementById('tipo-piscina').innerText = dados.titulo;
+                document.getElementById('descricao-servico').innerText = dados.descricao;
+            } else {
+                document.getElementById('tipo-piscina').innerText = "Tipo não encontrado";
+                document.getElementById('descricao-servico').innerText = "Por favor, selecione um tipo de serviço válido na tela anterior.";
+            }
+            adicionarListenersDeCalculo();
+        };
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const editIcon = document.getElementById('edit-icon');
+            const descricaoDiv = document.getElementById('descricao-servico');
+            editIcon.addEventListener('click', () => {
+                const isEditable = descricaoDiv.isContentEditable;
+                if (isEditable) {
+                    descricaoDiv.contentEditable = false;
+                    descricaoDiv.classList.remove('editing');
+                } else {
+                    descricaoDiv.contentEditable = true;
+                    descricaoDiv.classList.add('editing');
+                    descricaoDiv.focus();
+                }
+            });
+        });
+        let servicoContador = 1;
+        const adicionarBtn = document.getElementById('adicionar-servico-btn');
+        const servicosContainer = document.getElementById('servicos-container');
+        function adicionarServico() {
+            servicoContador++;
+            const novoServicoDiv = document.createElement('div');
+            novoServicoDiv.classList.add('service-table');
+            novoServicoDiv.innerHTML = `
+                <div class="table-cell">
+                    <label>Serviço nº:</label>
+                    <span class="servico-numero">${servicoContador}</span>
+                </div>
+                <div class="table-cell">
+                    <label>Tipo:</label>
+                    <input type="text" placeholder="Descrição do serviço" class="campo-limpavel">
+                </div>
+                <div class="table-cell">
+                    <label>Valor:</label>
+                    <input type="number" placeholder="Digite aqui" class="servico-valor campo-limpavel">
+                </div>
+            `;
+            servicosContainer.appendChild(novoServicoDiv);
+            const tabelaDescricao = document.getElementById('tabela-descricao');
+            const numeroCell = document.createElement('div');
+            numeroCell.classList.add('desc-cell', 'content-cell');
+            numeroCell.innerText = servicoContador;
+            const descricaoCell = document.createElement('div');
+            descricaoCell.classList.add('desc-cell', 'content-cell');
+            descricaoCell.contentEditable = true;
+            tabelaDescricao.appendChild(numeroCell);
+            tabelaDescricao.appendChild(descricaoCell);
+            adicionarListenersDeCalculo();
+        }
+        function atualizarValorTotal() {
+            let total = 0;
+            const todosOsValores = document.querySelectorAll('.servico-valor');
+            todosOsValores.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            const totalInput = document.getElementById('valor-total-input');
+            totalInput.value = total.toFixed(2);
+        }
+        function adicionarListenersDeCalculo() {
+            const todosOsValores = document.querySelectorAll('.servico-valor');
+            todosOsValores.forEach(input => {
+                input.addEventListener('input', atualizarValorTotal);
+            });
+        }
+        adicionarBtn.addEventListener('click', adicionarServico);
+
+        const gerarPdfBtn = document.getElementById('gerar-pdf-btn');
+        function gerarPDF() {
+            window.print();
+        }
+        gerarPdfBtn.addEventListener('click', gerarPDF);
+
+        const limparBtn = document.getElementById('limpar-campos-btn');
+        function limparCampos() {
+            const campos = document.querySelectorAll('.campo-limpavel');
+            campos.forEach(input => {
+                input.value = '';
+            });
+            while (servicosContainer.children.length > 1) {
+                servicosContainer.removeChild(servicosContainer.lastChild);
+            }
+            const tabelaDescricao = document.getElementById('tabela-descricao');
+            while (tabelaDescricao.children.length > 4) {
+                tabelaDescricao.removeChild(tabelaDescricao.lastChild);
+            }
+            if (dadosPiscinas[tipoPiscinaAtual]) {
+                 document.getElementById('descricao-servico').innerHTML = dadosPiscinas[tipoPiscinaAtual].descricao;
+            } else {
+                 document.getElementById('descricao-servico').innerHTML = '';
+            }
+            servicoContador = 1;
+            atualizarValorTotal();
+        }
+        limparBtn.addEventListener('click', limparCampos);
+    </script>
+</body>
+</html>

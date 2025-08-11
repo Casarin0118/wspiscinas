@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela Inicial</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('orcamento') }}" style="width: 100%; text-decoration: none;">
+            <button class="button">Criar orçamento</button>
+        </a>
+        <a href="{{ url_for('laudo') }}" style="width: 100%; text-decoration: none;">
+            <button class="button">Criar laudo</button>
+        </a>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+        </div>
+    </div>
+</body>
+</html>

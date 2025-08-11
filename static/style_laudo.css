@@ -1,0 +1,190 @@
+/* GERAL */
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 15px;
+    display: flex;
+    flex-direction: column; /* Para alinhar o botão no final */
+    align-items: center;
+    color: #333;
+    gap: 20px; /* Espaço entre o formulário e o botão */
+}
+.form-container {
+    background-color: #fff;
+    max-width: 500px; /* Um pouco mais largo que o orçamento */
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* INPUTS E TEXTAREA */
+input[type="text"], input[type="number"], input[type="date"], .textarea {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 1em;
+    width: 100%;
+    padding: 2px 0;
+}
+input:focus { outline: none; }
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+.textarea {
+    min-height: 100px;
+    border: 1px solid #eee;
+    padding: 8px;
+    border-radius: 5px;
+}
+.textarea:focus { outline: 2px solid #1E90FF; }
+
+/* CABEÇALHO */
+.header { display: flex; align-items: center; border: 1px solid black; padding: 10px; }
+.header-logo { max-width: 80px; margin-right: 15px; }
+.company-info { font-size: 0.9em; }
+.company-info p { margin: 3px 0; }
+
+/* LAYOUT LADO A LADO */
+.inline-container, .field-group { display: flex; gap: 10px; }
+.info-box-inline, .field-box { flex: 1; border: 1px solid black; padding: 8px 12px; }
+
+/* CAIXAS DE CAMPO */
+.field-box { margin: 0; position: relative; padding-top: 15px; }
+.field-box legend, .description-box legend { 
+    font-weight: bold; 
+    font-size: 0.9em;
+    padding: 0 5px;
+    /* Truque para a legenda ficar sobre a borda */
+    position: absolute;
+    top: -0.6em;
+    left: 10px;
+    background-color: #fff;
+}
+
+/* TABELA DE SERVIÇO */
+.service-table { display: flex; border: 1px solid black; text-align: center; }
+.table-cell { flex: 1; padding: 8px; }
+.table-cell:not(:first-child) { border-left: 1px solid black; }
+.table-cell label { display: block; font-weight: bold; font-size: 0.9em; margin-bottom: 4px; }
+.table-cell input { text-align: center; border-bottom: 1px solid #999; }
+
+/* GALERIA DE FOTOS */
+.galeria-fotos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colunas */
+    gap: 10px;
+    border: 1px solid black;
+    padding: 10px;
+}
+.foto-item {
+    text-align: center;
+    font-size: 0.8em;
+}
+.foto-item img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+.foto-item p {
+    margin: 5px 0 0;
+}
+.botao-add-foto {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100px;
+    border: 2px dashed #ccc;
+    border-radius: 50%;
+    font-size: 3em;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.botao-add-foto:hover {
+    background-color: #f0f8ff;
+    color: #1E90FF;
+    border-color: #1E90FF;
+}
+#input-foto {
+    display: none; /* O input real fica escondido */
+}
+
+/* VALOR TOTAL */
+.total-container { display: flex; justify-content: center; }
+.info-box-total { display: flex; border: 1px solid black; width: 50%; }
+.info-box-total label { padding: 8px 12px; font-weight: bold; }
+.info-box-total input { padding: 8px; border-left: 1px solid black; text-align: center; }
+
+/* ASSINATURAS */
+.assinaturas {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px; /* Aumenta o espaço acima das assinaturas */
+    gap: 20px;
+}
+.assinatura-block {
+    width: 40%;
+    text-align: center;
+}
+.assinatura-imagem {
+    height: 60px; /* Espaço vertical reservado para a imagem/assinatura */
+    margin-bottom: 5px;
+    display: flex;
+    align-items: flex-end; /* Alinha a imagem na base do espaço */
+    justify-content: center;
+}
+.assinatura-img {
+    max-height: 100%; /* Garante que a imagem não ultrapasse o espaço */
+    max-width: 100%;
+}
+.linha-assinatura-texto {
+    border-top: 1px solid black;
+    font-size: 0.8em;
+    padding-top: 5px;
+}
+
+/* BOTÃO DE AÇÃO PRINCIPAL */
+.action-buttons { width: 100%; max-width: 500px; }
+.btn {color: white; border: none; padding: 15px; border-radius: 30px; font-size: 1.2em; font-weight: bold; cursor: pointer; width: 100%; }
+.btn-green { margin-top: 10px; background-color: #32CD32; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.btn-green:hover { background-color: #228B22; }
+.btn-blue {background-color: blue; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+.btn-blue:hover{background-color: #1E90FF;}
+/* --- ESTILOS DE IMPRESSÃO PARA O PDF (LAUDO) --- */
+@media print {
+    body {
+        background-color: #fff;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .action-buttons {
+        display: none !important;
+    }
+
+    .form-container {
+        width: 100% !important;
+        max-width: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .header, .info-box-inline, .field-box, .service-table, .info-box-total, .description-table, .galeria-fotos {
+        box-shadow: none !important;
+        border: 1px solid #999;
+    }
+
+    .field-box, .service-table, .description-table, .header, .total-container, .galeria-fotos, .assinaturas {
+        page-break-inside: avoid; /* Tenta não quebrar estes elementos entre páginas */
+    }
+}
